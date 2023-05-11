@@ -10,6 +10,8 @@ use jeroendn\PhpHelpers\EnvHelper;
 
 EnvHelper::loadEnv(__DIR__ . '/.env');
 
+const COMMAND_CHAR = '!';
+
 $discord = new Discord([
     'token'   => getenv('DISCORD_TOKEN'),
     'intents' => Intents::getDefaultIntents()
@@ -18,10 +20,27 @@ $discord = new Discord([
 require_once __DIR__ . '/src/pkmn.php';
 
 $discord->on('ready', function (Discord $discord) {
-    echo "Bot is ready!", PHP_EOL;
+    echo "\033[38;2;78;50;122m
+                                                           /(((/                
+                                                            ./((/               
+                                                              (///              
+                                                               //(/             
+                                                               ,//(,            
+          (/.            */(((                                 ,(///            
+          ,(((/(////(/((((//.                                  //((/            
+            ((/(/((((((((((,                                 //////             
+             ///(((/((/((((//          (((/(/(/(//(///((/(/(///((.              
+              /(//.(((/(((///(/(/((/(//((/(/(/(/(/((/((/(((/(((*                
+                (//(/((/((((((/////////(//(/(/(//((////(/((((/,                 
+                  *((((///(//(/(/(((////(/(////((///(/(/(/(/(/                  
+                   /(((/((/(((//(////(///(/(((((((/(((/((((.                    
+                   ////(/(/(((/(//(//(((//((/(///((/(//((                       
+                   //(/(//((/(//(/((/,,.       */(/((/(/((/                     
+                /(((////  //((/                 //(/((*(((/(/                   
+               /((/(((//////(/              /(/(/(////(/(((/(                   \033[0m", PHP_EOL;
 
     $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) {
-        if ($message->content === 'ping') {
+        if (strtolower($message->content) === COMMAND_CHAR . 'ping') {
             $message->reply('pong');
         }
     });

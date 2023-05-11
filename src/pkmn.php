@@ -436,7 +436,7 @@ $discord->on('ready', function (Discord $discord) {
 
         try {
 
-            if (preg_match('/(fuse)\s+(\w+)\s+(\w+)/i', $message->content, $matches)) {
+            if (preg_match('/(' . COMMAND_CHAR . 'fuse)\s+(\w+)\s+(\w+)/i', $message->content, $matches)) {
 
                 $ids = array_change_key_case(IDS);
 
@@ -445,7 +445,7 @@ $discord->on('ready', function (Discord $discord) {
 
                 replyFuse($message, $pkmn1Id, $pkmn2Id);
             }
-            elseif (strtolower($message->content) === 'fuse') {
+            elseif (strtolower($message->content) === COMMAND_CHAR . 'fuse') {
                 replyRandomFuse($message);
             }
 
