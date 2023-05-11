@@ -8,7 +8,7 @@ use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use jeroendn\PhpHelpers\EnvHelper;
 
-EnvHelper::loadEnv();
+EnvHelper::loadEnv(__DIR__ . '/.env');
 
 $discord = new Discord([
     'token'   => getenv('DISCORD_TOKEN'),
