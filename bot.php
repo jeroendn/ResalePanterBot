@@ -1,5 +1,5 @@
 <?php
-
+#!/usr/local/bin/php
 include __DIR__ . '/vendor/autoload.php';
 
 use Discord\Discord;
@@ -16,6 +16,8 @@ $discord = new Discord([
 //      | Intents::MESSAGE_CONTENT, // Note: MESSAGE_CONTENT is privileged, see https://dis.gd/mcfaq
 ]);
 
+require_once __DIR__ . '/src/pkmn.php';
+
 $discord->on('ready', function (Discord $discord) {
     echo "Bot is ready!", PHP_EOL;
 
@@ -24,9 +26,6 @@ $discord->on('ready', function (Discord $discord) {
         if ($message->content === 'ping') {
             $message->reply('pong');
         }
-
-        echo "{$message->author->username}: {$message->content}", PHP_EOL;
-        // Note: MESSAGE_CONTENT intent must be enabled to get the content if the bot is not mentioned/DMed.
     });
 });
 
