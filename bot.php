@@ -1,6 +1,9 @@
+#!/usr/bin/php
 <?php
-#!/usr/local/bin/php
-include __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/src/lock.php';
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Discord\Discord;
 use Discord\Parts\Channel\Message;
