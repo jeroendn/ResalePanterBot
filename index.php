@@ -1,30 +1,17 @@
-#!/usr/bin/php
-<?php
+<html lang="EN">
 
-require_once __DIR__ . '/src/lock.php';
+<head>
+    <title>Resale Panter</title>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+</head>
 
-require_once __DIR__ . '/vendor/autoload.php';
+<body>
 
-use Discord\Discord;
-use Discord\Parts\Channel\Message;
-use Discord\WebSockets\Intents;
-use Discord\WebSockets\Event;
-use jeroendn\PhpHelpers\EnvHelper;
-
-EnvHelper::loadEnv(__DIR__ . '/.env');
-
-const COMMAND_CHAR = '!';
-
-$discord = new Discord([
-    'token'   => getenv('DISCORD_TOKEN'),
-    'intents' => Intents::getDefaultIntents()
-]);
-
-require_once __DIR__ . '/src/pkmn.php';
-
-$discord->on('ready', function (Discord $discord) {
-    echo "\033[38;2;78;50;122m
-                                                           /(((/                
+<h1>Resale Panter Discord bot</h1>
+<pre>
+<?=
+"                                                           /(((/                
                                                             ./((/               
                                                               (///              
                                                                //(/             
@@ -40,13 +27,36 @@ $discord->on('ready', function (Discord $discord) {
                    ////(/(/(((/(//(//(((//((/(///((/(//((                       
                    //(/(//((/(//(/((/          */(/((/(/((/                     
                 /(((////  //((/                 //(/((*(((/(/                   
-               /((/(((//////(/              /(/(/(////(/(((/(                   \033[0m", PHP_EOL;
+               /((/(((//////(/              /(/(/(////(/(((/(                   "
+?>
+</pre>
 
-    $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) {
-        if (strtolower($message->content) === COMMAND_CHAR . 'ping') {
-            $message->reply('pong');
-        }
-    });
-});
+<p>Status: <?php
+    $online   = false;
+    $lockFile = fopen(__DIR__ . '/lock.pid', 'c');
+    $gotLock  = flock($lockFile, LOCK_EX | LOCK_NB, $wouldBlock);
+    if ($lockFile === false || (!$gotLock && !$wouldBlock)) {
+        echo "Failed to check status";
+    }
+    elseif (!$gotLock && $wouldBlock) {
+        echo 'Online';
+        $online = true;
+    }
+    else {
+        echo 'Offline';
+    }
+    ?></p>
 
-$discord->run();
+<?php if ($online): ?>
+    <button onclick="window.location.href = 'https://bot.jeroendn.nl/start.php'">Start bot</button>
+<?php endif; ?>
+
+<br>
+<br>
+<br>
+<br>
+<a href="https://github.com/jeroendn/ResalePanterBot" target="_blank">https://github.com/jeroendn/ResalePanterBot</a>
+
+</body>
+
+</html>

@@ -5,4 +5,4 @@
 
 $result = shell_exec('php bot.php 2>&1 > running.log');
 
-die('Started bot');
+die('Bot is running');
