@@ -1,4 +1,5 @@
 .idea
 /vendor/
+/logs
 .env
 lock.pid
