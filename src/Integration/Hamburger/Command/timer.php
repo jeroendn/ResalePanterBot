@@ -1,6 +1,7 @@
 <?php
 
 use Discord\Discord;
+use Discord\Http\Exceptions\NoPermissionsException;
 use Discord\Parts\User\Activity;
 use Discord\WebSockets\Intents;
 use jeroendn\PhpHelpers\EnvHelper;
@@ -16,20 +17,45 @@ $discord = new Discord([
     'intents' => Intents::getDefaultIntents()
 ]);
 
-// This is the child process
-// Define the interval (in seconds) between each time check
-$interval = 120;
+enableTimer($discord);
 
-// Create a new event loop instance
-$loop = Loop::get();
+/**
+ * @param Discord $discord
+ * @return void
+ */
+function enableTimer(Discord $discord): void
+{
+    $sendNotifications = [];
 
-// Schedule the time check to run every $interval seconds
-$loop->addPeriodicTimer($interval, function (TimerInterface $timer) use (&$loop, &$discord) {
+    $interval = 200;
 
-    $now = new DateTimeImmutable;
+    $loop = Loop::get();
 
-    echo 'Hamburger timer is at: ' . $now->format('Y/m/d H:i:s') . PHP_EOL;
+    // Schedule the time check to run every $interval seconds
+    $loop->addPeriodicTimer($interval, function (TimerInterface $timer) use (&$loop, &$discord, &$sendNotifications) {
 
+        $now = new DateTimeImmutable;
+
+        echo 'Hamburger timer is at: ' . $now->format('Y/m/d H:i:s') . PHP_EOL;
+
+        updatePresence($discord, $now);
+
+        sendHamburgerMessage($discord, $now, $sendNotifications);
+
+    });
+
+    $loop->run();
+
+    exit('Hamburger timer has stopped');
+}
+
+/**
+ * @param Discord           $discord
+ * @param DateTimeImmutable $now
+ * @return void
+ */
+function updatePresence(Discord $discord, DateTimeImmutable $now): void
+{
     $weekDay  = date('w', $now->getTimestamp());
     $isFriday = ($weekDay == 5);
 
@@ -45,10 +71,34 @@ $loop->addPeriodicTimer($interval, function (TimerInterface $timer) use (&$loop,
     elseif ($isFriday && $now->getTimestamp() > $end->getTimestamp() && $now->getTimestamp() < $dontClearAfter->getTimestamp()) {
         $discord->updatePresence();
     }
+}
 
-});
+/**
+ * @param Discord           $discord
+ * @param DateTimeImmutable $now
+ * @param array             $sendNotifications
+ * @return void
+ * @throws NoPermissionsException
+ */
+function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$sendNotifications): void
+{
+    $start = (new DateTimeImmutable('now'))->setTime(11, 45);
+    $end   = (new DateTimeImmutable('now'))->setTime(12, 00);
 
-$loop->run();
+    $arrayKey = $now->format('Ymd');
 
-// Exit the child process
-exit('Hamburger timer has stopped');
+    if (
+        $now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()
+        &&
+        !array_key_exists($arrayKey, $sendNotifications)
+    ) {
+        $guild           = $discord->guilds[getenv('RESALE_PARTNERS_GUILD_ID')];
+        $systemChannelId = $guild['system_channel_id'];
+
+        $channel = $discord->getChannel($systemChannelId);
+
+        $channel->sendMessage("🍔🍔🍔HAMBURGERS🍔🍔🍔\nhttps://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp");
+
+        $sendNotifications[$arrayKey] = true;
+    }
+}
