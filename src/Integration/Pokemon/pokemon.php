@@ -436,7 +436,7 @@ $discord->on('ready', function (Discord $discord) {
 
         try {
 
-            if (preg_match('/(' . getenv('COMMAND_CHAR') . 'fuse)\s+(\w+)\s+(\w+)/i', $message->content, $matches)) {
+            if (preg_match('/^(' . getenv('COMMAND_CHAR') . 'fuse)\s+(\w+)\s+(\w+)/i', $message->content, $matches)) {
 
                 $ids = array_change_key_case(IDS);
 
