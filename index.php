@@ -32,11 +32,11 @@
 </pre>
 
 <p>Status: <?php
-    $online   = false;
     $lockFile = fopen(__DIR__ . '/lock.pid', 'c');
     $gotLock  = flock($lockFile, LOCK_EX | LOCK_NB, $wouldBlock);
     if ($lockFile === false || (!$gotLock && !$wouldBlock)) {
         echo "Failed to check status";
+        $online = null;
     }
     elseif (!$gotLock && $wouldBlock) {
         echo 'Online';
@@ -44,10 +44,11 @@
     }
     else {
         echo 'Offline';
+        $online = false;
     }
     ?></p>
 
-<?php if ($online): ?>
+<?php if ($online === false): ?>
     <button onclick="window.location.href = 'https://bot.jeroendn.nl/start.php'">Start bot</button>
 <?php endif; ?>
 
