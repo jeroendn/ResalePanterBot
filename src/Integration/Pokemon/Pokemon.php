@@ -15,8 +15,8 @@ class Pokemon implements CommandInterface, IntegrationInterface
 {
     public const COMMAND_NAME_FUSE        = 'fuse';
     public const COMMAND_NAME_FUSE_RANDOM = 'fuse-random';
-    public const COMMAND_INFO_FUSE        = 'Check bot online status';
-    public const COMMAND_INFO_FUSE_RANDOM = 'Check bot online status';
+    public const COMMAND_INFO_FUSE        = 'Fuse 2 pokemon of your choice';
+    public const COMMAND_INFO_FUSE_RANDOM = 'Fuse 2 random pokemon';
 
     private const IDS = [
         'Bulbasaur'         => 1,
