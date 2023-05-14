@@ -1,3 +1,10 @@
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Michelf\Markdown;
+
+?>
 <html lang="EN">
 
 <head>
@@ -8,7 +15,6 @@
 
 <body>
 
-<h1>Resale Panter Discord bot</h1>
 <pre>
 <?=
 "                                                           /(((/                
@@ -57,6 +63,8 @@
 <br>
 <br>
 <a href="https://github.com/jeroendn/ResalePanterBot" target="_blank">https://github.com/jeroendn/ResalePanterBot</a>
+
+<?= Markdown::defaultTransform(file_get_contents('README.md')); ?>
 
 </body>
 

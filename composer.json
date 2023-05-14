@@ -5,7 +5,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Jeroendn\\Resalepanterbot\\": "src/"
+      "ResalePanterBot\\": "src/"
     }
   },
   "authors": [
@@ -19,6 +19,7 @@
     "ext-json": "*",
     "ext-zlib": "*",
     "team-reflex/discord-php": "^7.3",
-    "jeroendn/php-helpers": "v0.5-beta"
+    "jeroendn/php-helpers": "v0.5-beta",
+    "michelf/php-markdown": "^2.0"
   }
 }

@@ -12,6 +12,9 @@ use Discord\Parts\Interactions\Interaction;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
 use jeroendn\PhpHelpers\EnvHelper;
+use ResalePanterBot\Integration\Hamburger\Hamburger;
+use ResalePanterBot\Integration\PingPong\PingPong;
+use ResalePanterBot\Integration\Pokemon\Pokemon;
 
 EnvHelper::loadEnv(__DIR__ . '/.env');
 
@@ -20,9 +23,7 @@ $discord = new Discord([
     'intents' => Intents::getDefaultIntents()
 ]);
 
-require_once __DIR__ . '/src/Integration/PingPong/pingpong.php';
-require_once __DIR__ . '/src/Integration/Hamburger/hamburger.php';
-require_once __DIR__ . '/src/Integration/Pokemon/pokemon.php';
+require_once __DIR__ . '/src/functions.php';
 
 $discord->on('ready', function (Discord $discord) {
 
@@ -45,6 +46,12 @@ $discord->on('ready', function (Discord $discord) {
                 /(((////  //((/                 //(/((*(((/(/                   
                /((/(((//////(/              /(/(/(////(/(((/(                   \033[0m", PHP_EOL;
 
+    $pingPong  = new PingPong($discord);
+    $pokemon   = new Pokemon($discord);
+    $hamburger = new Hamburger($discord);
+
+    $discord->application->commands->clear(); // Clear registered commands in case of change or removal of command
+
     $discord->application->commands->save(
         $discord->application->commands->create(CommandBuilder::new()
             ->setName('help')
@@ -52,71 +59,42 @@ $discord->on('ready', function (Discord $discord) {
             ->toArray()
         )
     );
+    $pingPong->registerCommands();
+    $pokemon->registerCommands();
 
-    $discord->application->commands->save(
-        $discord->application->commands->create(CommandBuilder::new()
-            ->setName('ping')
-            ->setDescription('Check bot online status')
-            ->toArray()
-        )
-    );
+    $hamburger->startTimerProcess();
 
-//    $discord->application->commands->save(
-//        $discord->application->commands->create(CommandBuilder::new()
-//            ->setName('fuse')
-//            ->setDescription('Fuse 2 Pokemon')
-//            ->toArray()
-//        )
-//    );
+    echo "\033[0m\033[48;2;0;128;0m READY FOR EVENT LISTENING \033[0m", PHP_EOL;
 
-//    $discord->application->commands->save(
-//        $discord->application->commands->create(CommandBuilder::new()
-//            ->setName('fuserandom')
-//            ->setDescription('Fuse 2 random Pokemon')
-//            ->toArray()
-//        )
-//    );
-
-    $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
+    $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) use ($pingPong, $pokemon) {
         if ($interaction->type === InteractionType::APPLICATION_COMMAND) {
 
             switch ($interaction->data->name) {
                 case 'help':
-                    $message = MessageBuilder::new()->setContent("!fuse {pokemon1} {pokemon2}
-Fuse 2 Pokemon (Not available as slash command yet)
-
-!fuse
-Fuse 2 random Pokemon (Not available as slash command yet)
-
-/ping
-Check bot status");
+                    $message = MessageBuilder::new()->setContent($pokemon->getHelpString() . "\n\n" . $pingPong->getHelpString());
 
                     try {
                         $interaction->respondWithMessage($message);
                     }
                     catch (Throwable $e) {
+                        respondWithError($interaction, $e->getMessage());
                         echo $e->getMessage();
                     }
 
                     break;
-                case 'ping':
-                    $message = MessageBuilder::new()->setContent('ping');
-
-                    try {
-                        $interaction->respondWithMessage($message);
-                    }
-                    catch (Throwable $e) {
-                        echo $e->getMessage();
-                    }
-
+                case PingPong::COMMAND_NAME:
+                    $pingPong->handleCommand($interaction);
                     break;
-                case 'fuse':
-                    // TODO
+                case Pokemon::COMMAND_NAME_FUSE:
+                    $options = $interaction->data->options->toArray();
 
+                    $pokemon->handleFuseCommand($interaction, $options['pokemon1']['value'], $options['pokemon2']['value']);
                     break;
-                case 'fuserandom':
-                    // TODO
-
+                case Pokemon::COMMAND_NAME_FUSE_RANDOM:
+                    $pokemon->handleRandomFuseCommand($interaction, 5);
+                    break;
+                default:
+                    respondWithError($interaction, 'Command handler not found.');
                     break;
             }
 
