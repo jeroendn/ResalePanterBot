@@ -63,12 +63,20 @@ function updatePresence(Discord $discord, DateTimeImmutable $now): void
     $end            = (new DateTimeImmutable('now'))->setTime(12, 30);
     $dontClearAfter = $end->modify('+15 minutes');
 
-    if ($isFriday && $now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()) {
+    if (
+        $isFriday
+        &&
+        $now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()
+    ) {
         $activity = new Activity($discord, ['name' => '🍔 Hamburgers!', 'type' => Activity::TYPE_PLAYING]);
 
         $discord->updatePresence($activity);
     }
-    elseif ($isFriday && $now->getTimestamp() > $end->getTimestamp() && $now->getTimestamp() < $dontClearAfter->getTimestamp()) {
+    elseif (
+        $isFriday
+        &&
+        $now->getTimestamp() > $end->getTimestamp() && $now->getTimestamp() < $dontClearAfter->getTimestamp()
+    ) {
         $discord->updatePresence();
     }
 }
@@ -82,12 +90,17 @@ function updatePresence(Discord $discord, DateTimeImmutable $now): void
  */
 function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$sendNotifications): void
 {
+    $weekDay  = date('w', $now->getTimestamp());
+    $isFriday = ($weekDay == 5);
+
     $start = (new DateTimeImmutable('now'))->setTime(11, 45);
     $end   = (new DateTimeImmutable('now'))->setTime(12, 00);
 
     $arrayKey = $now->format('Ymd');
 
     if (
+        $isFriday
+        &&
         $now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()
         &&
         !array_key_exists($arrayKey, $sendNotifications)
