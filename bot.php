@@ -13,6 +13,7 @@ use Discord\WebSockets\Intents;
 use jeroendn\PhpHelpers\EnvHelper;
 use ResalePanterBot\CreateCommand;
 use ResalePanterBot\DeleteCommands;
+use ResalePanterBot\Integration\Fact\Fact;
 use ResalePanterBot\Integration\Hamburger\Hamburger;
 use ResalePanterBot\Integration\PingPong\PingPong;
 use ResalePanterBot\Integration\Pokemon\Pokemon;
@@ -50,10 +51,12 @@ $discord->on('ready', function (Discord $discord) {
     $pingPong  = new PingPong($discord);
     $pokemon   = new Pokemon($discord);
     $hamburger = new Hamburger($discord);
+    $fact      = new Fact($discord);
 
 //    refreshCommands($discord, $pingPong, $pokemon); // This has to be executed only once
 
-    $hamburger->startTimerProcess();
+    $hamburger->startSubProcess();
+    $fact->startSubProcess();
 
     echo "\033[0m\033[48;2;0;128;0m READY FOR EVENT LISTENING \033[0m", PHP_EOL;
 

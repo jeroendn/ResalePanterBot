@@ -1,12 +1,12 @@
 <?php
 
-namespace ResalePanterBot\Integration\Hamburger;
+namespace ResalePanterBot\Integration\Fact;
 
 use Discord\Discord;
 use ResalePanterBot\Integration\IntegrationInterface;
 use ResalePanterBot\Integration\SubProcessInterface;
 
-class Hamburger implements SubProcessInterface, IntegrationInterface
+class Fact implements SubProcessInterface, IntegrationInterface
 {
     /**
      * @param Discord $discord
@@ -18,7 +18,7 @@ class Hamburger implements SubProcessInterface, IntegrationInterface
      */
     public function startSubProcess(): void
     {
-        $exec = sprintf('%s /dev/null 2>&1 &', 'php src/Integration/Hamburger/Command/timer.php');
+        $exec = sprintf('%s /dev/null 2>&1 &', 'php src/Integration/Fact/Command/timer.php');
 
         echo "Starting: $exec \n";
         proc_open($exec, [], $pipes);
