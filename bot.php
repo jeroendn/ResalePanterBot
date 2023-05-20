@@ -79,6 +79,9 @@ $discord->on('ready', function (Discord $discord) {
                 case PingPong::COMMAND_NAME:
                     $pingPong->handleCommand($interaction);
                     break;
+                case Pokemon::COMMAND_NAME_FUSE_OPTIONS:
+                    $pokemon->handleFuseOptionsCommand($interaction);
+                    break;
                 case Pokemon::COMMAND_NAME_FUSE:
                     $options = $interaction->data->options->toArray();
 

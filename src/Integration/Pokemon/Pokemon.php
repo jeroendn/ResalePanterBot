@@ -4,6 +4,7 @@ namespace ResalePanterBot\Integration\Pokemon;
 
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
+use Discord\Parts\Embed\Embed;
 use Discord\Parts\Interactions\Command\Option;
 use Discord\Parts\Interactions\Interaction;
 use Exception;
@@ -13,10 +14,12 @@ use ResalePanterBot\Integration\IntegrationInterface;
 
 class Pokemon implements CommandInterface, IntegrationInterface
 {
-    public const COMMAND_NAME_FUSE        = 'fuse';
-    public const COMMAND_NAME_FUSE_RANDOM = 'fuse-random';
-    public const COMMAND_INFO_FUSE        = 'Fuse 2 pokemon of your choice';
-    public const COMMAND_INFO_FUSE_RANDOM = 'Fuse 2 random pokemon';
+    public const COMMAND_NAME_FUSE_OPTIONS = 'fuse-options';
+    public const COMMAND_NAME_FUSE         = 'fuse';
+    public const COMMAND_NAME_FUSE_RANDOM  = 'fuse-random';
+    public const COMMAND_INFO_FUSE_OPTIONS = 'Get a list of available pokemon to fuse';
+    public const COMMAND_INFO_FUSE         = 'Fuse 2 pokemon of your choice';
+    public const COMMAND_INFO_FUSE_RANDOM  = 'Fuse 2 random pokemon';
 
     private Discord $discord;
     private array   $pokemonIds = [];
@@ -47,6 +50,8 @@ class Pokemon implements CommandInterface, IntegrationInterface
      */
     public function registerCommands(): void
     {
+        CreateCommand::create($this->discord, self::COMMAND_NAME_FUSE_OPTIONS, self::COMMAND_INFO_FUSE_OPTIONS);
+
         CreateCommand::create($this->discord, self::COMMAND_NAME_FUSE, self::COMMAND_INFO_FUSE, [
             new Option($this->discord, [
                 'name'        => 'pokemon1',
@@ -61,6 +66,22 @@ class Pokemon implements CommandInterface, IntegrationInterface
         ]);
 
         CreateCommand::create($this->discord, self::COMMAND_NAME_FUSE_RANDOM, self::COMMAND_INFO_FUSE_RANDOM);
+    }
+
+    /**
+     * @param Interaction $interaction
+     * @return void
+     */
+    public function handleFuseOptionsCommand(Interaction $interaction): void
+    {
+        $embed = new Embed($this->discord, [
+            'title'       => 'Available pokemon',
+            'description' => implode(', ', array_keys(json_decode(file_get_contents(__DIR__ . '/Config/pokemon.json'), true)))
+        ]);
+
+        $message = MessageBuilder::new()->setEmbeds([$embed]);
+
+        $interaction->respondWithMessage($message);
     }
 
     /**
@@ -106,7 +127,7 @@ class Pokemon implements CommandInterface, IntegrationInterface
      * @param int         $maxRetries
      * @return void
      */
-    function handleRandomFuseCommand(Interaction $interaction, int $maxRetries = 0): void
+    public function handleRandomFuseCommand(Interaction $interaction, int $maxRetries = 0): void
     {
         $pokemonName1 = array_rand($this->pokemonIds);
         $pokemonName2 = array_rand($this->pokemonIds);
