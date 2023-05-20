@@ -2,11 +2,11 @@
 
 namespace ResalePanterBot\Integration\PingPong;
 
-use Discord\Builders\CommandBuilder;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 use Exception;
+use ResalePanterBot\CreateCommand;
 use ResalePanterBot\Integration\CommandInterface;
 use ResalePanterBot\Integration\IntegrationInterface;
 use Throwable;
@@ -40,13 +40,7 @@ final class PingPong implements CommandInterface, IntegrationInterface
      */
     public function registerCommands(): void
     {
-        $this->discord->application->commands->save(
-            $this->discord->application->commands->create(CommandBuilder::new()
-                ->setName(self::COMMAND_NAME)
-                ->setDescription(self::COMMAND_INFO)
-                ->toArray()
-            )
-        );
+        CreateCommand::create($this->discord, self::COMMAND_NAME, self::COMMAND_INFO);
     }
 
     /**

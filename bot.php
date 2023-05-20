@@ -4,7 +4,6 @@ require_once __DIR__ . '/src/lock.php';
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Discord\Builders\CommandBuilder;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\InteractionType;
@@ -12,6 +11,8 @@ use Discord\Parts\Interactions\Interaction;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
 use jeroendn\PhpHelpers\EnvHelper;
+use ResalePanterBot\CreateCommand;
+use ResalePanterBot\DeleteCommands;
 use ResalePanterBot\Integration\Hamburger\Hamburger;
 use ResalePanterBot\Integration\PingPong\PingPong;
 use ResalePanterBot\Integration\Pokemon\Pokemon;
@@ -50,17 +51,7 @@ $discord->on('ready', function (Discord $discord) {
     $pokemon   = new Pokemon($discord);
     $hamburger = new Hamburger($discord);
 
-    $discord->application->commands->clear(); // Clear registered commands in case of change or removal of command
-
-    $discord->application->commands->save(
-        $discord->application->commands->create(CommandBuilder::new()
-            ->setName('help')
-            ->setDescription('Get a list of available commands')
-            ->toArray()
-        )
-    );
-    $pingPong->registerCommands();
-    $pokemon->registerCommands();
+//    refreshCommands($discord, $pingPong, $pokemon); // This has to be executed only once
 
     $hamburger->startTimerProcess();
 
@@ -104,3 +95,20 @@ $discord->on('ready', function (Discord $discord) {
 });
 
 $discord->run();
+
+/**
+ * @param Discord  $discord
+ * @param PingPong $pingPong
+ * @param Pokemon  $pokemon
+ * @return void
+ * @throws Exception
+ */
+function refreshCommands(Discord $discord, PingPong $pingPong, Pokemon $pokemon): void
+{
+    DeleteCommands::delete($discord)->done(function () use ($discord, $pingPong, $pokemon) {
+        CreateCommand::create($discord, 'help', 'Get a list of available commands');
+
+        $pingPong->registerCommands();
+        $pokemon->registerCommands();
+    });
+}
