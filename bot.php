@@ -82,6 +82,11 @@ $discord->on('ready', function (Discord $discord) {
                 case Pokemon::COMMAND_NAME_FUSE:
                     $options = $interaction->data->options->toArray();
 
+                    if (!isset($options['pokemon1']['value'], $options['pokemon2']['value'])) {
+                        respondWithError($interaction, 'Please provide both options.');
+                        break;
+                    }
+
                     $pokemon->handleFuseCommand($interaction, $options['pokemon1']['value'], $options['pokemon2']['value']);
                     break;
                 case Pokemon::COMMAND_NAME_FUSE_RANDOM:
