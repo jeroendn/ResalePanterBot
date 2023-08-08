@@ -55,7 +55,7 @@ use Michelf\Markdown;
     ?></p>
 
 <?php if ($online === false): ?>
-    <button onclick="window.location.href = 'https://bot.jeroendn.nl/start.php'">Start bot</button>
+    <button onclick="window.location.href = '/start.php'">Start bot</button>
 <?php endif; ?>
 
 <br>
