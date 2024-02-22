@@ -1,0 +1,32 @@
+(defaults_resale_panter) {
+    root * /apps/resale_panter
+	php_fastcgi resale_panter:9000 {
+        root /var/www/html
+        try_files {path} index.php = 404
+    }
+
+    # Serve static files
+    file_server {
+        hide .env
+    }
+
+    handle_errors {
+    	respond "{err.status_code} {err.status_text}"
+    }
+}
+
+rho.jeroendn.nl {
+    import defaults_resale_panter
+
+    tls {
+        on_demand
+    }
+}
+
+resalepanter.local {
+    import defaults_resale_panter
+
+    tls internal {
+        on_demand
+    }
+}
