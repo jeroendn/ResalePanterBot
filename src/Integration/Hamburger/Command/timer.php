@@ -59,8 +59,8 @@ function updatePresence(Discord $discord, DateTimeImmutable $now): void
     $weekDay  = date('w', $now->getTimestamp());
     $isFriday = ($weekDay == 5);
 
-    $start          = (new DateTimeImmutable('now'))->setTime(11, 45);
-    $end            = (new DateTimeImmutable('now'))->setTime(12, 30);
+    $start          = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(11, 45);
+    $end            = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(12, 30);
     $dontClearAfter = $end->modify('+15 minutes');
 
     if (
@@ -93,8 +93,8 @@ function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$
     $weekDay  = date('w', $now->getTimestamp());
     $isFriday = ($weekDay == 5);
 
-    $start = (new DateTimeImmutable('now'))->setTime(11, 45);
-    $end   = (new DateTimeImmutable('now'))->setTime(12, 00);
+    $start = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(11, 45);
+    $end   = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(12, 00);
 
     $arrayKey = $now->format('Ymd');
 
@@ -110,7 +110,14 @@ function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$
 
         $channel = $discord->getChannel($systemChannelId);
 
-        $channel->sendMessage("🍔🍔🍔HAMBURGERS🍔🍔🍔\nhttps://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp");
+        if (rand(1, 3) == 1) {
+            $imageUrl = 'https://kappa.jeroendn.nl/WUNi7/ZAwekarE72.png';
+        }
+        else {
+            $imageUrl = 'https://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp';
+        }
+
+        $channel->sendMessage("🍔🍔🍔HAMBURGERS🍔🍔🍔\n $imageUrl");
 
         $sendNotifications[$arrayKey] = true;
     }
