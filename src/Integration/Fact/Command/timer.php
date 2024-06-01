@@ -70,7 +70,7 @@ function sendFactMessage(Discord $discord, string $fact, DateTimeImmutable $send
     $now = new DateTimeImmutable;
 
     $weekDay         = date('w', $now->getTimestamp());
-    $shouldSendToday = ($weekDay == 2 || $weekDay == 5 || $weekDay == 7); // Send on monday/wednesday/friday
+    $shouldSendToday = ($weekDay == 1 || $weekDay == 3 || $weekDay == 5); // Send on monday/wednesday/friday
 
     $start = $sendFactOn;
     $end   = $sendFactOn->modify('+30 minutes');
