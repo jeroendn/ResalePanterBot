@@ -12,6 +12,16 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 EnvHelper::loadEnv(__DIR__ . '/../../../../.env');
 
+const HAMBURGER_IMAGES = [
+    'https://kappa.jeroendn.nl/WUNi7/ZAwekarE72.png',
+    'https://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp',
+    'https://media1.tenor.com/m/_w2En8QGqe4AAAAC/burger-hungry.gif',
+    'https://media1.tenor.com/m/lNhF82M3IfAAAAAd/cheeseburger-burger.gif',
+    'https://media1.tenor.com/m/7ZOOvYZjSuYAAAAC/happy-hamburger-day-red-meat.gif',
+    'https://media1.tenor.com/m/84vbqWFxLuYAAAAC/burgers-patrick-star.gif',
+    'https://media1.tenor.com/m/DJt8eN7_KdkAAAAd/hey-kitty-you-can-have-cheeze-burger-cheeze-burger.gif'
+];
+
 $discord = new Discord([
     'token'   => getenv('DISCORD_TOKEN'),
     'intents' => Intents::getDefaultIntents()
@@ -110,14 +120,9 @@ function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$
 
         $channel = $discord->getChannel($systemChannelId);
 
-        if (rand(1, 3) == 1) {
-            $imageUrl = 'https://kappa.jeroendn.nl/WUNi7/ZAwekarE72.png';
-        }
-        else {
-            $imageUrl = 'https://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp';
-        }
+        $imageUrl = HAMBURGER_IMAGES[rand(0, count(HAMBURGER_IMAGES))];
 
-        $channel->sendMessage("🍔🍔🍔HAMBURGERS🍔🍔🍔\n $imageUrl");
+        $channel->sendMessage("🍔🍔🍔 HAMBURGERS 🍔🍔🍔\n $imageUrl");
 
         $sendNotifications[$arrayKey] = true;
     }
