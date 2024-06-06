@@ -103,8 +103,8 @@ function sendFactMessage(Discord $discord, string $fact, DateTimeImmutable $send
  */
 function createRandomTime(): DateTimeImmutable
 {
-    $start = (new DateTimeImmutable('now'))->setTime(9, 00);
-    $end   = (new DateTimeImmutable('now'))->setTime(16, 45);
+    $start = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(9, 00);
+    $end   = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(16, 45);
 
     $startTimestamp = $start->getTimestamp();
     $endTimestamp   = $end->getTimestamp();
@@ -129,5 +129,5 @@ function factHasBeenSendBeforeNow(DateTimeImmutable $lastFactSendOn): bool
  */
 function factHasBeenSendBeforeToday(DateTimeImmutable $lastFactSendOn): bool
 {
-    return $lastFactSendOn->getTimestamp() < (new DateTimeImmutable('now'))->setTime(0, 0)->getTimestamp();
+    return $lastFactSendOn->getTimestamp() < (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(0, 0)->getTimestamp();
 }
