@@ -5,6 +5,7 @@ RUN apk add --no-cache \
     mc \
     # telnet
     busybox-extras \
+    cronie \
     gmp \
     gmp-dev
 
@@ -13,3 +14,7 @@ RUN docker-php-ext-install \
 
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php
 RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+COPY ./crontab /etc/crontabs/root
+RUN chmod 0644 /etc/crontabs/root
+CMD ["sh", "-c", "crond && php-fpm"]

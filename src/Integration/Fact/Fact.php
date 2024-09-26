@@ -18,7 +18,7 @@ class Fact implements SubProcessInterface, IntegrationInterface
      */
     public function startSubProcess(): void
     {
-        $exec = sprintf('%s /dev/null 2>&1 &', 'php src/Integration/Fact/Command/timer.php');
+        $exec = sprintf('%s /dev/null 2>&1 &', '/usr/local/bin/php /var/www/html/src/Integration/Fact/Command/timer.php');
 
         echo "Starting: $exec \n";
         proc_open($exec, [], $pipes);
