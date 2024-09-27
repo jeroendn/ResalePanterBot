@@ -28,7 +28,7 @@ function enableTimer(Discord $discord): void
 {
     $facts = json_decode(file_get_contents(__DIR__ . '/../Config/facts.json'), true);
 
-    $lastFactSendOn = new DateTimeImmutable('yesterday'); // TODO Keep send history persistent
+    $sendMessagesOn = []; // date string as key and date object as value // TODO Keep send history persistent
     $sendFactOn     = createRandomTime();
 
     $interval = 500;
@@ -36,14 +36,12 @@ function enableTimer(Discord $discord): void
     $loop = Loop::get();
 
     // Schedule the time check to run every $interval seconds
-    $loop->addPeriodicTimer($interval, function (TimerInterface $timer) use (&$loop, &$discord, &$facts, $sendFactOn, &$lastFactSendOn) {
+    $loop->addPeriodicTimer($interval, function (TimerInterface $timer) use (&$loop, &$discord, &$facts, $sendFactOn, &$sendMessagesOn) {
 
         $fact = $facts[array_rand($facts)];
 
-        $force = factHasBeenSendBeforeToday($lastFactSendOn);
-
-        if (!factHasBeenSendBeforeNow($lastFactSendOn) || $force) {
-            sendFactMessage($discord, $fact, $sendFactOn, $lastFactSendOn, $force);
+        if (!factHasBeenSendBeforeToday(end($sendMessagesOn))) {
+            sendFactMessage($discord, $fact, $sendFactOn, $sendMessagesOn);
         }
         else {
             // TODO kill
@@ -60,12 +58,12 @@ function enableTimer(Discord $discord): void
  * @param Discord           $discord
  * @param string            $fact
  * @param DateTimeImmutable $sendFactOn
- * @param DateTimeImmutable $lastFactSendOn
+ * @param array             $lastFactSendOn
  * @param bool              $force Force sending message without checking time
  * @return void
  * @throws NoPermissionsException
  */
-function sendFactMessage(Discord $discord, string $fact, DateTimeImmutable $sendFactOn, DateTimeImmutable &$lastFactSendOn, bool $force = false): void
+function sendFactMessage(Discord $discord, string $fact, DateTimeImmutable $sendFactOn, array &$lastFactSendOn, bool $force = false): void
 {
     $now = new DateTimeImmutable;
 
@@ -94,7 +92,7 @@ function sendFactMessage(Discord $discord, string $fact, DateTimeImmutable $send
 
         $channel->sendMessage($message);
 
-        $lastFactSendOn = $now;
+        $lastFactSendOn[$now->format('d-m-Y')] = $now;
     }
 }
 
@@ -111,16 +109,7 @@ function createRandomTime(): DateTimeImmutable
 
     $randomTimestamp = mt_rand($startTimestamp, $endTimestamp);
 
-    return (new DateTimeImmutable())->setTimestamp($randomTimestamp);
-}
-
-/**
- * @param DateTimeImmutable $lastFactSendOn
- * @return bool
- */
-function factHasBeenSendBeforeNow(DateTimeImmutable $lastFactSendOn): bool
-{
-    return $lastFactSendOn->getTimestamp() < (new DateTimeImmutable('now'))->getTimestamp();
+    return (new DateTimeImmutable)->setTimestamp($randomTimestamp);
 }
 
 /**
@@ -129,5 +118,8 @@ function factHasBeenSendBeforeNow(DateTimeImmutable $lastFactSendOn): bool
  */
 function factHasBeenSendBeforeToday(DateTimeImmutable $lastFactSendOn): bool
 {
-    return $lastFactSendOn->getTimestamp() < (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(0, 0)->getTimestamp();
+    $now = (new DateTimeImmutable)->setTime(0, 0);
+    $dateToCheck = $lastFactSendOn->setTime(0, 0);
+
+    return $now->getTimestamp() < $dateToCheck->getTimestamp();
 }
