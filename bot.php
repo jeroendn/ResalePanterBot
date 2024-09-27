@@ -53,14 +53,14 @@ $discord->on('ready', function (Discord $discord) {
     $hamburger = new Hamburger($discord);
     $fact      = new Fact($discord);
 
-//    refreshCommands($discord, $pingPong, $pokemon); // This has to be executed only once
+    refreshCommands($discord, $pingPong, $pokemon, $fact); // This has to be executed only once
 
     $hamburger->startSubProcess();
     $fact->startSubProcess();
 
     echo "\033[0m\033[48;2;0;128;0m READY FOR EVENT LISTENING \033[0m", PHP_EOL;
 
-    $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) use ($pingPong, $pokemon) {
+    $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) use ($pingPong, $pokemon, $fact) {
         if ($interaction->type === InteractionType::APPLICATION_COMMAND) {
 
             switch ($interaction->data->name) {
@@ -95,6 +95,9 @@ $discord->on('ready', function (Discord $discord) {
                 case Pokemon::COMMAND_NAME_FUSE_RANDOM:
                     $pokemon->handleRandomFuseCommand($interaction, 5);
                     break;
+                case Fact::COMMAND_NAME_CAT_FACT:
+                    $fact->handleCatFactCommand($interaction);
+                    break;
                 default:
                     respondWithError($interaction, 'Command handler not found.');
                     break;
@@ -111,15 +114,17 @@ $discord->run();
  * @param Discord  $discord
  * @param PingPong $pingPong
  * @param Pokemon  $pokemon
+ * @param Fact     $fact
  * @return void
  * @throws Exception
  */
-function refreshCommands(Discord $discord, PingPong $pingPong, Pokemon $pokemon): void
+function refreshCommands(Discord $discord, PingPong $pingPong, Pokemon $pokemon, Fact $fact): void
 {
-    DeleteCommands::delete($discord)->done(function () use ($discord, $pingPong, $pokemon) {
+    DeleteCommands::delete($discord)->done(function () use ($discord, $pingPong, $pokemon, $fact) {
         CreateCommand::create($discord, 'help', 'Get a list of available commands');
 
         $pingPong->registerCommands();
         $pokemon->registerCommands();
+        $fact->registerCommands();
     });
 }
