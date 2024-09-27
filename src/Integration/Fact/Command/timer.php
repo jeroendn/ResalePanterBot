@@ -40,8 +40,8 @@ function enableTimer(Discord $discord): void
 
         $fact = $facts[array_rand($facts)];
 
-        if (!factHasBeenSendBeforeToday(end($sendMessagesOn))) {
-            sendFactMessage($discord, $fact, $sendFactOn, $sendMessagesOn);
+        if (lastFactHasBeenSendBeforeToday(end($sendMessagesOn))) {
+            sendFactMessage($discord, $fact, $sendFactOn, $sendMessagesOn, true);
         }
         else {
             // TODO kill
@@ -116,7 +116,7 @@ function createRandomTime(): DateTimeImmutable
  * @param DateTimeImmutable $lastFactSendOn
  * @return bool
  */
-function factHasBeenSendBeforeToday(DateTimeImmutable $lastFactSendOn): bool
+function lastFactHasBeenSendBeforeToday(DateTimeImmutable $lastFactSendOn): bool
 {
     $now = (new DateTimeImmutable)->setTime(0, 0);
     $dateToCheck = $lastFactSendOn->setTime(0, 0);
