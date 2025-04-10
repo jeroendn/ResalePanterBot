@@ -38,25 +38,14 @@ use Michelf\Markdown;
 </pre>
 
 <p>Status: <?php
-    $lockFile = fopen(__DIR__ . '/lock.pid', 'c');
-    $gotLock  = flock($lockFile, LOCK_EX | LOCK_NB, $wouldBlock);
-    if ($lockFile === false || (!$gotLock && !$wouldBlock)) {
-        echo "Failed to check status";
-        $online = null;
-    }
-    elseif (!$gotLock && $wouldBlock) {
-        echo 'Online';
-        $online = true;
+    if (file_exists(__DIR__ . '/lock.pid')) {
+        echo "PID exits";
     }
     else {
         echo 'Offline';
         $online = false;
     }
     ?></p>
-
-<?php if ($online === false): ?>
-    <button onclick="window.location.href = '/start.php'">Start bot</button>
-<?php endif; ?>
 
 <br>
 <br>
