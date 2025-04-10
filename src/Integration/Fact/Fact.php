@@ -8,9 +8,8 @@ use Discord\Parts\Embed\Embed;
 use Discord\Parts\Interactions\Interaction;
 use ResalePanterBot\CreateCommand;
 use ResalePanterBot\Integration\IntegrationInterface;
-use ResalePanterBot\Integration\SubProcessInterface;
 
-class Fact implements SubProcessInterface, IntegrationInterface
+class Fact implements IntegrationInterface
 {
     public const COMMAND_NAME_CAT_FACT = 'cat-fact';
     public const COMMAND_INFO_CAT_FACT = 'Get a random cat fact';
@@ -23,17 +22,6 @@ class Fact implements SubProcessInterface, IntegrationInterface
     public function __construct(Discord $discord)
     {
         $this->discord = $discord;
-    }
-
-    /**
-     * @return void
-     */
-    public function startSubProcess(): void
-    {
-        $exec = sprintf('%s /dev/null 2>&1 &', '/usr/local/bin/php /var/www/html/src/Integration/Fact/Command/timer.php');
-
-        echo "Starting: $exec \n";
-        proc_open($exec, [], $pipes);
     }
 
     public function registerCommands(): void

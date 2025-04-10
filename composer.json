@@ -18,8 +18,11 @@
     "ext-gmp": "*",
     "ext-json": "*",
     "ext-zlib": "*",
-    "team-reflex/discord-php": "^7.3",
+    "team-reflex/discord-php": "^10.4",
     "jeroendn/php-helpers": "v0.5-beta",
     "michelf/php-markdown": "^2.0"
+  },
+  "config": {
+    "sort-packages": true
   }
 }

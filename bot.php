@@ -56,7 +56,6 @@ $discord->on('ready', function (Discord $discord) {
     refreshCommands($discord, $pingPong, $pokemon, $fact); // This has to be executed only once
 
     $hamburger->startSubProcess();
-    $fact->startSubProcess();
 
     echo "\033[0m\033[48;2;0;128;0m READY FOR EVENT LISTENING \033[0m", PHP_EOL;
 
@@ -120,7 +119,7 @@ $discord->run();
  */
 function refreshCommands(Discord $discord, PingPong $pingPong, Pokemon $pokemon, Fact $fact): void
 {
-    DeleteCommands::delete($discord)->done(function () use ($discord, $pingPong, $pokemon, $fact) {
+    DeleteCommands::delete($discord)->then(function () use ($discord, $pingPong, $pokemon, $fact) {
         CreateCommand::create($discord, 'help', 'Get a list of available commands');
 
         $pingPong->registerCommands();

@@ -14,10 +14,8 @@ EnvHelper::loadEnv(__DIR__ . '/../../../../.env');
 
 const HAMBURGER_IMAGES = [
     'https://kappa.jeroendn.nl/WUNi7/ZAwekarE72.png',
-    'https://i.giphy.com/media/dGyzYOvRPn21y/giphy.webp',
     'https://media1.tenor.com/m/_w2En8QGqe4AAAAC/burger-hungry.gif',
     'https://media1.tenor.com/m/lNhF82M3IfAAAAAd/cheeseburger-burger.gif',
-    'https://media1.tenor.com/m/7ZOOvYZjSuYAAAAC/happy-hamburger-day-red-meat.gif',
     'https://media1.tenor.com/m/84vbqWFxLuYAAAAC/burgers-patrick-star.gif',
     'https://media1.tenor.com/m/DJt8eN7_KdkAAAAd/hey-kitty-you-can-have-cheeze-burger-cheeze-burger.gif'
 ];
@@ -78,7 +76,7 @@ function updatePresence(Discord $discord, DateTimeImmutable $now): void
         &&
         $now->getTimestamp() > $start->getTimestamp() && $now->getTimestamp() < $end->getTimestamp()
     ) {
-        $activity = new Activity($discord, ['name' => '🍔 Hamburgers!', 'type' => Activity::TYPE_PLAYING]);
+        $activity = new Activity($discord, ['name' => '🍔 Hamburgers!', 'type' => Activity::TYPE_GAME]);
 
         $discord->updatePresence($activity);
     }

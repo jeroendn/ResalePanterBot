@@ -6,7 +6,7 @@ use Discord\Builders\CommandBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Command\Option;
 use Exception;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 
 class CreateCommand
 {
@@ -15,10 +15,10 @@ class CreateCommand
      * @param string   $name
      * @param string   $description
      * @param Option[] $options
-     * @return ExtendedPromiseInterface
+     * @return PromiseInterface
      * @throws Exception
      */
-    public static function create(Discord $discord, string $name, string $description, array $options = []): ExtendedPromiseInterface
+    public static function create(Discord $discord, string $name, string $description, array $options = []): PromiseInterface
     {
         $command = CommandBuilder::new()
             ->setName($name)
