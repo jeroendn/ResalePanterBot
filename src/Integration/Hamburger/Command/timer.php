@@ -120,7 +120,8 @@ function sendHamburgerMessage(Discord $discord, DateTimeImmutable $now, array &$
 
         $imageUrl = HAMBURGER_IMAGES[rand(0, count(HAMBURGER_IMAGES))];
 
-        $channel->sendMessage("🍔🍔🍔 HAMBURGERS 🍔🍔🍔\n $imageUrl");
+        $channel->sendMessage('🍔🍔🍔 HAMBURGERS 🍔🍔🍔');
+        $channel->sendMessage($imageUrl);
 
         $sendNotifications[$arrayKey] = true;
     }
