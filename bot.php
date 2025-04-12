@@ -94,8 +94,8 @@ $discord->on('ready', function (Discord $discord) {
                 case Pokemon::COMMAND_NAME_FUSE_RANDOM:
                     $pokemon->handleRandomFuseCommand($interaction, 5);
                     break;
-                case Fact::COMMAND_NAME_CAT_FACT:
-                    $fact->handleCatFactCommand($interaction);
+                case Fact::COMMAND_NAME_RANDOM_FACT:
+                    $fact->handleRandomFactCommand($interaction);
                     break;
                 default:
                     respondWithError($interaction, 'Command handler not found.');
