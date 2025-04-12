@@ -14,7 +14,11 @@ $discord = new Discord([
     'intents' => Intents::getDefaultIntents()
 ]);
 
-if (rand(1, 100) === 1) {
-    $fact = new Fact($discord);
-    $fact->sendFactMessage($discord, true);
-}
+$discord->on('ready', function (Discord $discord) {
+
+    if (rand(1, 100) === 1) {
+        $fact = new Fact($discord);
+        $fact->sendFactMessage();
+    }
+
+});

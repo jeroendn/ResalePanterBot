@@ -9,24 +9,19 @@ use Discord\Parts\Embed\Embed;
 use Discord\Parts\Guild\Guild;
 use Discord\Parts\Interactions\Interaction;
 use Discord\Repository\Guild\ChannelRepository;
-use JetBrains\PhpStorm\NoReturn;
+use Exception;
+use React\Promise\PromiseInterface;
 use ResalePanterBot\CreateCommand;
 use ResalePanterBot\Integration\IntegrationInterface;
 
 final class Fact implements IntegrationInterface
 {
-    public const COMMAND_NAME_RANDOM_FACT = 'random-fact';
-    public const COMMAND_INFO_RANDOM_FACT = 'Get a random fact';
+    public const string COMMAND_NAME_RANDOM_FACT = 'random-fact';
+    public const string COMMAND_INFO_RANDOM_FACT = 'Get a random fact';
 
-    private Discord $discord;
-
-    /**
-     * @param Discord $discord
-     */
-    public function __construct(Discord $discord)
-    {
-        $this->discord = $discord;
-    }
+    public function __construct(
+        private readonly Discord $discord
+    ) {}
 
     public function registerCommands(): void
     {
@@ -45,15 +40,11 @@ final class Fact implements IntegrationInterface
         $interaction->respondWithMessage($message);
     }
 
-    public function sendFactMessage(Discord $discord, bool $killProcess = false): void
+    /**
+     * @throws Exception
+     */
+    public function sendFactMessage(bool $killProcess = false): PromiseInterface
     {
-        $embed = new Embed($discord, [
-            'title'       => 'Jory\'s feitje',
-            'description' => $this->getRandomFactMessage()
-        ]);
-
-        $message = MessageBuilder::new()->setEmbeds([$embed]);
-
         if (getenv('MODE') === 'PROD') {
             $guildId = getenv('RESALE_PARTNERS_GUILD_ID');
         }
@@ -61,21 +52,36 @@ final class Fact implements IntegrationInterface
             $guildId = getenv('KOTS_KAT_GUILD_ID');
         }
 
-        $discord->guilds->fetch($guildId)->then(function (Guild $guild) use ($discord, $message, $killProcess) {
+        return $this->discord->guilds->fetch($guildId)
+            ->then(
+                function (Guild $guild) use ($killProcess) {
 
-            $discord->getFactory()->repository(ChannelRepository::class)->fetch($guild->system_channel_id)->then(function (Channel $channel) use ($discord, $message, $killProcess) {
-                $channel->sendMessage($message)->finally(function () use ($killProcess) {
-                    if ($killProcess) $this->stop();
-                });
-            }, function ($e) use ($killProcess) {
-                echo "Failed to fetch channel: " . $e->getMessage() . PHP_EOL;
-                if ($killProcess) $this->stop();
-            });
+                    return $this->discord->getFactory()->repository(ChannelRepository::class)->fetch($guild->system_channel_id)
+                        ->then(
+                            function (Channel $channel) use ($killProcess) {
+                                $embed = new Embed($this->discord, [
+                                    'title'       => 'Jory\'s feitje',
+                                    'description' => $this->getRandomFactMessage()
+                                ]);
 
-        }, function ($e) use ($killProcess) {
-            echo "Failed to fetch guild: " . $e->getMessage() . PHP_EOL;
-            if ($killProcess) $this->stop();
-        });
+                                $message = MessageBuilder::new()->setEmbeds([$embed]);
+
+                                return $channel->sendMessage($message)->finally(function () use ($killProcess) {
+                                    $this->discord->close();
+                                });
+                            },
+                            function ($e) use ($killProcess) {
+                                echo "Failed to fetch channel: " . $e->getMessage() . PHP_EOL;
+                                $this->discord->close();
+                            }
+                        );
+
+                },
+                function ($e) use ($killProcess) {
+                    echo "Failed to fetch guild: " . $e->getMessage() . PHP_EOL;
+                    $this->discord->close();
+                }
+            );
     }
 
     private function getRandomFactMessage(): string
@@ -83,11 +89,5 @@ final class Fact implements IntegrationInterface
         $facts = json_decode(file_get_contents(__DIR__ . '/Config/facts.json'), true);
 
         return $facts[array_rand($facts)];
-    }
-
-    #[NoReturn] private function stop(): void
-    {
-        echo "Stopping job! \n";
-        die;
     }
 }

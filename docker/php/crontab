@@ -1,2 +1,3 @@
 */15 * * * * /usr/bin/flock -n /tmp/bot.lock /usr/local/bin/php /var/www/html/bot.php >> /var/log/bot-cron.log 2>&1
-*/7 9-17 * * 1-5 /usr/bin/flock -n /tmp/bot-facts.lock /usr/local/bin/php /var/www/html/src/Integration/Fact/job/randomFact.php >> /var/log/bot-cron-fact.log 2>&1
+*/7 9-17 * * 1-5 /usr/bin/flock -n /tmp/facts.lock /usr/local/bin/php /var/www/html/src/Integration/Fact/job/randomFact.php >> /var/log/bot-cron-fact.log 2>&1
+45 11 * * 5 /usr/bin/flock -n /tmp/hamburger.lock /usr/local/bin/php /var/www/html/src/Integration/Hamburger/job/hamburger.php >> /var/log/bot-cron-hamburger.log 2>&1
