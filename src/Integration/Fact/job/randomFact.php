@@ -66,20 +66,6 @@ function sendRandomFactMessage(Discord $discord): void
     die;
 }
 
-$now = new DateTimeImmutable;
-
-$weekDay         = date('w', $now->getTimestamp());
-$shouldSendToday = !($weekDay != 6 && $weekDay != 7); // ($weekDay == 1 || $weekDay == 3 || $weekDay == 5); // Send on monday/wednesday/friday
-
-$minTime = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(9, 00);
-$maxTime = (new DateTimeImmutable('now'))->setTimezone(new DateTimeZone('Europe/Amsterdam'))->setTime(16, 45);
-
-if (
-    $shouldSendToday
-    &&
-    ($now->getTimestamp() > $minTime->getTimestamp() && $now->getTimestamp() < $maxTime->getTimestamp())
-) {
-    if (rand(1, 100) === 1) {
-        sendRandomFactMessage($discord);
-    }
+if (rand(1, 100) === 1) {
+    sendRandomFactMessage($discord);
 }
