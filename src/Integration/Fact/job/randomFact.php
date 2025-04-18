@@ -19,8 +19,8 @@ $discord->on('ready', function (Discord $discord) {
     if (rand(1, 100) === 1) {
         $fact = new Fact($discord);
         $fact->sendFactMessage();
+    } else {
+        die; // Stop execution when not doing anything as well.
     }
-
-    die; // Stop execution when not doing anything as well.
-
+    
 });
