@@ -21,4 +21,6 @@ $discord->on('ready', function (Discord $discord) {
         $fact->sendFactMessage();
     }
 
+    die; // Stop execution when not doing anything as well.
+
 });
