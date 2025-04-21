@@ -6,7 +6,7 @@ services:
     container_name: php_resale_panter
     restart: unless-stopped
     environment:
-      - TZ=Europe/Amsterdam
+      TZ: Europe/Amsterdam
     volumes:
       - ./:/var/www/html
     networks:
