@@ -5,6 +5,8 @@ services:
     image: php_resale_panter:fpm-alpine
     container_name: php_resale_panter
     restart: unless-stopped
+    environment:
+      - TZ=Europe/Amsterdam
     volumes:
       - ./:/var/www/html
     networks:
