@@ -14,7 +14,7 @@ $discord = new Discord([
     'intents' => Intents::getDefaultIntents()
 ]);
 
-$discord->on('ready', function (Discord $discord) {
+$discord->on('init', function (Discord $discord) {
 
     $hamburger = new Hamburger($discord);
     $hamburger->sendHamburgerMessage()

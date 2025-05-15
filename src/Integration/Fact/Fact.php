@@ -43,7 +43,7 @@ final class Fact implements IntegrationInterface
     /**
      * @throws Exception
      */
-    public function sendFactMessage(bool $killProcess = false): PromiseInterface
+    public function sendFactMessage(): PromiseInterface
     {
         if (getenv('MODE') === 'PROD') {
             $guildId = getenv('RESALE_PARTNERS_GUILD_ID');
@@ -54,11 +54,11 @@ final class Fact implements IntegrationInterface
 
         return $this->discord->guilds->fetch($guildId)
             ->then(
-                function (Guild $guild) use ($killProcess) {
+                function (Guild $guild) {
 
                     return $this->discord->getFactory()->repository(ChannelRepository::class)->fetch($guild->system_channel_id)
                         ->then(
-                            function (Channel $channel) use ($killProcess) {
+                            function (Channel $channel) {
                                 $embed = new Embed($this->discord, [
                                     'title'       => 'Jory\'s feitje',
                                     'description' => $this->getRandomFactMessage()
@@ -66,18 +66,18 @@ final class Fact implements IntegrationInterface
 
                                 $message = MessageBuilder::new()->setEmbeds([$embed]);
 
-                                return $channel->sendMessage($message)->finally(function () use ($killProcess) {
+                                return $channel->sendMessage($message)->finally(function () {
                                     $this->discord->close();
                                 });
                             },
-                            function ($e) use ($killProcess) {
+                            function ($e) {
                                 echo "Failed to fetch channel: " . $e->getMessage() . PHP_EOL;
                                 $this->discord->close();
                             }
                         );
 
                 },
-                function ($e) use ($killProcess) {
+                function ($e) {
                     echo "Failed to fetch guild: " . $e->getMessage() . PHP_EOL;
                     $this->discord->close();
                 }

@@ -26,7 +26,7 @@ $discord = new Discord([
 
 require_once __DIR__ . '/src/functions.php';
 
-$discord->on('ready', function (Discord $discord) {
+$discord->on('init', function (Discord $discord) {
 
     echo "\033[38;2;78;50;122m
                                                            /(((/                
