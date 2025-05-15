@@ -51,9 +51,10 @@ $discord->on('init', function (Discord $discord) {
                                         if ($lastMessageWasFromBot) {
                                             echo 'Not sending message, because previous message also from the bot itself' . PHP_EOL;
                                             $discord->close(); // Stop execution when not doing anything as well.
+                                            return;
                                         }
 
-                                        if (!$lastMessageWasFromBot /* && rand(1, 100) === 1 */) {
+                                        if (rand(1, 100) === 1) {
                                             $fact = new Fact($discord);
                                             $fact->sendFactMessage();
                                         }
